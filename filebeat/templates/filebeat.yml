@@ -1,8 +1,5 @@
-{% set _prospectors = filebeat_default_prospectors + filebeat_custom_prospectors %}
-{% set _outputs = filebeat_default_outputs %}
-{% set _ = _outputs.update(filebeat_custom_outputs ) %}
 filebeat:
     prospectors:
-    {{ _prospectors | to_nice_yaml | indent(4) }}
+    {{ filebeat_prospectors | to_nice_yaml | indent(4) }}
 output:
-    {{ _outputs | to_nice_yaml | indent(4) }}
+    {{ filebeat_outputs | to_nice_yaml | indent(4) }}

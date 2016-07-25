@@ -6,12 +6,10 @@ filebeat_package: "filebeat"
 filebeat_config_dir: "/etc/filebeat"
 filebeat_config: "filebeat.yml"
 
-filebeat_default_prospectors:
+filebeat_prospectors:
   - paths:
     - /var/log/*.log
-filebeat_custom_prospectors: []
 
-filebeat_default_outputs:
+filebeat_outputs:
   logstash:
     hosts: ["localhost:5044"]
-filebeat_custom_outputs: []
