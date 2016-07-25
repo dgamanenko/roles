@@ -1,0 +1,34 @@
+---
+
+- name: Add filebeat repo
+  apt_repository: repo="{{ filebeat_repo }}" state=present
+  tags: ['filebeat', 'filebeat:install']
+
+- name: Add filebeat repository key
+  apt_key: keyserver=pgp.mit.edu id="{{ filebeat_apt_key_id }}"
+  tags: ['filebeat', 'filebeat:install']
+
+- name: Update apt cache
+  apt: update_cache=yes
+  tags: ['filebeat', 'filebeat:install']
+
+- name: Install filebeat
+  apt: name="{{ filebeat_package }}" state=present
+  tags: ['filebeat', 'filebeat:install']
+
+- name: Create configuration directory
+  file: path="{{ filebeat_config_dir }}" state=directory
+  tags: ['filebeat', 'filebeat:configuration']
+
+- name: Copy default filebeat configuration file
+  template: src="{{ filebeat_config }}" dest="{{ filebeat_config_dir }}/{{ filebeat_config | basename }}"
+  notify: restart filebeat
+  tags: ['filebeat', 'filebeat:configuration']
+
+- name: Enable filebeat
+  service: name=filebeat enabled=yes
+  tags: ['filebeat', 'filebeat:configuration']
+
+- name: Start filebeat
+  service: name=filebeat state=started
+  tags: ['filebeat', 'filebeat:configuration']

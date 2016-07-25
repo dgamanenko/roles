@@ -18,7 +18,7 @@
 
 - name: Create configuration directory
   file: path="{{ logstash_config_dir }}" state=directory owner=logstash group=logstash
-  tags: ['logstash', 'logstash:install']
+  tags: ['logstash', 'logstash:configuration']
 
 - name: Copy default logstash configuration files
   template: src="{{ item }}" dest="{{ logstash_config_dir }}/{{ item | basename }}"
