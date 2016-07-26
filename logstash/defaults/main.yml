@@ -9,15 +9,20 @@ logstash_default_configs:
   - "conf/20_geoip_filter.conf"
   - "conf/20_mongo_filter.conf"
   - "conf/20_nginx_filter.conf"
+  - "conf/20_openedx_filter.conf"
   - "conf/20_syslog_filter.conf"
   - "conf/30_elasticsearch_output.conf"
 logstash_custom_configs: []
 logstash_pattern_dir: "/opt/logstash/patterns"
 logstash_default_patterns:
+  - "patterns/elasticsearch"
   - "patterns/nginx"
+  - "patterns/openedx"
 logstash_custom_patterns: []
 
 logstash_input_beats_port: 5044
+
+logstash_filter_tags: []
 
 logstash_output_elasticsearch_hosts:
   - "localhost:9200"

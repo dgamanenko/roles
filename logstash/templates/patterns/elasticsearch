@@ -1,0 +1,1 @@
+ELASTICSEARCH \[%{TIMESTAMP_ISO8601}\]\[%{LOGLEVEL:level}%{SPACE}\]\[%{DATA:module}%{SPACE}\] %{GREEDYDATA:message}
