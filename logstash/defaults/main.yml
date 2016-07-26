@@ -1,6 +1,6 @@
 ---
 
-logstash_repo: "deb https://packages.elastic.co/beats/apt stable main"
+logstash_repo: "deb https://packages.elastic.co/logstash/2.3/debian stable main"
 logstash_apt_key_id: "46095ACC8548582C1A2699A9D27D666CD88E42B4"
 logstash_package: "logstash"
 logstash_config_dir: "/etc/logstash/conf.d"
