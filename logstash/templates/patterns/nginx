@@ -1,3 +1,6 @@
-NGUSERNAME [a-zA-Z\.\@\-\+_%]+
-NGUSER %{NGUSERNAME}
-NGINXACCESS %{IPORHOST:clientip} %{NGUSER:ident} %{NGUSER:auth} \[%{HTTPDATE}\] "%{WORD:verb} %{URIPATHPARAM:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:response} (?:%{NUMBER:bytes}|-) (?:"(?:%{URI:referrer}|-)"|%{QS:referrer}) %{QS:agent}
+NGINX_USER  [a-zA-Z\.\@\-\+_%]+
+NGINX_IPORHOST (?:%{IPORHOST}|[\-])
+NGINX_REQUEST %{WORD:request_verb} %{URIPATHPARAM:request_uri} HTTP/%{NUMBER:request_httpversion}
+NGINXACCESS_COMBINED %{NGINX_IPORHOST:remote_addr} - %{NGINX_USER:remote_user} \[%{HTTPDATE:time_local}\]%{SPACE}"%{NGINX_REQUEST:request}" %{NUMBER:status} (?:%{NUMBER:body_bytes_sent}|-) (?:"(?:%{URI:http_referer}|-)"|%{QS:http_referer}) %{QS:http_user_agent}
+NGINXACCESS_FORWARDED %{NGINX_IPORHOST:http_x_forwarded_for} - %{NGINX_IPORHOST:remote_addr} - %{NGINX_USER:remote_user} \[%{HTTPDATE:time_local}\]%{SPACE}"%{NGINX_REQUEST:request}" %{NUMBER:status} (?:%{NUMBER:body_bytes_sent}|-) %{NUMBER:request_time} (?:"(?:%{URI:http_referer}|-)"|%{QS:http_referer}) %{QS:http_user_agent}
+NGINXACCESS %{NGINXACCESS_COMBINED}|%{NGINXACCESS_FORWARDED}

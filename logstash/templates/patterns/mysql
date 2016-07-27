@@ -1,0 +1,1 @@
+MYSQL %{TIMESTAMP_ISO8601:timestamp} %{INT} \[%{WORD:level}\] %{GREEDYDATA:message}

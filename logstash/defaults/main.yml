@@ -6,8 +6,10 @@ logstash_package: "logstash"
 logstash_config_dir: "/etc/logstash/conf.d"
 logstash_default_configs:
   - "conf/10_beats_input.conf"
+  - "conf/20_elasticsearch_filter.conf"
   - "conf/20_geoip_filter.conf"
   - "conf/20_mongo_filter.conf"
+  - "conf/20_mysql_filter.conf"
   - "conf/20_nginx_filter.conf"
   - "conf/20_openedx_filter.conf"
   - "conf/20_syslog_filter.conf"
@@ -16,6 +18,8 @@ logstash_custom_configs: []
 logstash_pattern_dir: "/opt/logstash/patterns"
 logstash_default_patterns:
   - "patterns/elasticsearch"
+  - "patterns/mysql"
+  - "patterns/mongo"
   - "patterns/nginx"
   - "patterns/openedx"
 logstash_custom_patterns: []
