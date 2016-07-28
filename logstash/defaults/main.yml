@@ -9,6 +9,7 @@ logstash_default_configs:
   - "conf/20_celery_filter.conf"
   - "conf/20_elasticsearch_filter.conf"
   - "conf/20_geoip_filter.conf"
+  - "conf/20_grokparsefailure_filter.conf"
   - "conf/20_mongo_filter.conf"
   - "conf/20_mysql_filter.conf"
   - "conf/20_nginx_filter.conf"
