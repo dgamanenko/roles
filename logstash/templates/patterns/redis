@@ -1,0 +1,3 @@
+REDIS_ROLE [XCSM]
+REDIS_LEVEL [.\-*#]
+REDIS3 = %{POSINT:pid}:%{REDIS_ROLE:role} %{REDISTIMESTAMP:timestamp} %{REDIS_LEVEL:level} %{GREEDYDATA:message}

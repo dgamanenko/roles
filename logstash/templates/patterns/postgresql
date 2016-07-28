@@ -1,0 +1,1 @@
+POSTGRES %{TIMESTAMP_ISO8601:timestamp} %{TZ:timezone} \[%{POSINT:pid}-%{POSINT}\] %{USERNAME:user}@%{WORD:database} %{WORD:level}:%{SPACE}%{GREEDYDATA:message}
