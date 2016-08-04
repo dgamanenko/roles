@@ -1,0 +1,30 @@
+---
+
+- name: Install curator
+  pip: name="{{ item }}" state=present
+  with_items:
+    - certifi
+    - elasticsearch
+    - elasticsearch-curator
+  when: logstash_cleanup
+  tags: ['logstash', 'logstash:curator']
+
+- name: Copy cleanup script
+  template: >
+    src="{{ logstash_cleanup_script }}"
+    dest="/usr/local/bin/{{ logstash_cleanup_script | basename }}"
+    owner=root
+    group=root
+    mode=0700
+  when: logstash_cleanup
+  tags: ['logstash', 'logstash:curator']
+
+- name: Create cron job for cleanup
+  cron: >
+    name="Cleanup logstash logs"
+    cron_file=cleanup_logstash_logs
+    user=root
+    job="/usr/local/bin/{{ logstash_cleanup_script | basename }}"
+    special_time=daily
+    state="{{ logstash_cleanup | ternary('present', 'absent') }}"
+  tags: ['logstash', 'logstash:curator']
