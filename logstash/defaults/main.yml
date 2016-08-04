@@ -3,13 +3,13 @@
 logstash_repo: "deb https://packages.elastic.co/logstash/2.3/debian stable main"
 logstash_apt_key_id: "46095ACC8548582C1A2699A9D27D666CD88E42B4"
 logstash_package: "logstash"
+
+logstash_remove_configs: no
 logstash_config_dir: "/etc/logstash/conf.d"
 logstash_default_configs:
   - "10_beats_input.conf"
   - "20_celery_filter.conf"
   - "20_elasticsearch_filter.conf"
-  - "20_geoip_filter.conf"
-  - "20_grokparsefailure_filter.conf"
   - "20_mongo_filter.conf"
   - "20_mysql_filter.conf"
   - "20_nginx_filter.conf"
@@ -18,8 +18,11 @@ logstash_default_configs:
   - "20_redis_filter.conf"
   - "20_syslog_filter.conf"
   - "20_uwsgi_filter.conf"
+  - "24_grokparsefailure_filter.conf"
   - "30_elasticsearch_output.conf"
 logstash_custom_configs: []
+
+logstash_remove_patterns: no
 logstash_pattern_dir: "/opt/logstash/patterns"
 logstash_default_patterns:
   - "celery"

@@ -16,6 +16,16 @@
   apt: name="{{ logstash_package }}" state=present
   tags: ['logstash', 'logstash:install']
 
+- name: Remove old configuration files
+  file: path="{{ logstash_config_dir }}" state=absent
+  when: logstash_remove_configs
+  tags: ['logstash', 'logstash:configuration']
+
+- name: Remove old pattern files
+  file: path="{{ logstash_pattern_dir }}" state=absent
+  when: logstash_remove_patterns
+  tags: ['logstash', 'logstash:configuration']
+
 - name: Create configuration directory
   file: path="{{ logstash_config_dir }}" state=directory owner=logstash group=logstash
   tags: ['logstash', 'logstash:configuration']
