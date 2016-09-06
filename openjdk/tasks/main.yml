@@ -1,0 +1,11 @@
+---
+
+- name: Install openjdk
+  apt: name="{{ openjdk_package }}" state=present update_cache=yes
+  tags: ['openjdk', 'openjdk:install']
+
+- name: Set JAVA_HOME environment variable on shell startup
+  template: >
+    src="{{ openjdk_profile }}" dest="/etc/profile.d/{{ openjdk_profile | basename }}"
+    owner=root group=root mode=0755
+  tags: ['openjdk', 'openjdk:configuration']
