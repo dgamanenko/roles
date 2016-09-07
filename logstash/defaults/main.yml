@@ -45,6 +45,8 @@ logstash_output_elasticsearch_hosts:
 logstash_output_elasticsearch_user: ""
 logstash_output_elasticsearch_password: ""
 
+logstash_restart: no
+
 logstash_cleanup_script: "remove_old_indices.py"
 logstash_cleanup: no
 logstash_remove_older_than: 30
