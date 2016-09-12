@@ -1,0 +1,50 @@
+---
+
+- name: Create sftp group
+  group: name="{{ sftp_group }}"
+  tags: ['sftp']
+
+- name: Create restricted chroot directories
+  file: >
+    path="{{ item.chroot }}" state=directory
+    owner=root group="{{ sftp_group }}" mode=0755
+  with_items: sftp_users
+  tags: ['sftp']
+
+- name: Create restricted sftp users
+  user: >
+    name="{{ item.name }}" groups="{{ sftp_group }}"
+    home="{{ item.chroot }}" shell="/sbin/nologin"
+  with_items: sftp_users
+  tags: ['sftp']
+
+- name: Create writable directories in the chroot
+  file: >
+    path="{{ item.0.chroot }}/{{ item.1 }}" state=directory
+    owner="{{ item.0.name }}" group="{{ item.0.name }}" mode=0750
+  with_subelements:
+    - sftp_users
+    - dirs
+  tags: ['sftp']
+
+- name: Add SSH authorized keys
+  authorized_key: >
+    user={{ item.name }}
+    key={{ item.pubkey }}
+  with_items: sftp_users
+  tags: ['sftp']
+
+- name: Configure sftp settings
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    backup: yes
+    block: |
+      Match group {{ sftp_group }}
+        ChrootDirectory %h
+        X11Forwarding no
+        AllowTcpForwarding no
+        PasswordAuthentication no
+        ForceCommand internal-sftp
+    validate: "sshd -t -f %s"
+  notify: reload ssh
+  tags: ['sftp']
