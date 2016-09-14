@@ -1,0 +1,10 @@
+---
+
+# This must be overridden
+sftp_users:
+  - name: "sftpuser"
+    pubkey: ""  # The user's ssh public key
+    chroot: "/var/sftp/sftpuser"
+    dirs: ["foo", "bar"]  # Writable directories within the chroot
+
+sftp_group: "sftpgroup"
