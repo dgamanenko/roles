@@ -66,4 +66,10 @@
   service: name=logstash state=started
   tags: ['logstash', 'logstash:configuration']
 
+- name: Trigger handler to restart logstash
+  command: "/bin/true"
+  notify: restart logstash
+  when: logstash_restart
+  tags: ['logstash', 'logstash:configuration']
+
 - include: curator.yml
