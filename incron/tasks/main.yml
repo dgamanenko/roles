@@ -1,0 +1,21 @@
+---
+
+- name: Install incron
+  apt: name=incron state=present
+  tags: ['incron', 'incron:install']
+
+- name: Add incron jobs
+  lineinfile: >
+      dest=/etc/incron.d/jobs
+      create=yes
+      line="{{ item.path }} {{ item.mask }} {{ item.command }}"
+      state=present
+  with_items: incron_jobs
+  notify: restart incron
+  tags: ['incron', 'incron:configuration']
+
+- name: Trigger handler to restart incron
+  command: "/bin/true"
+  notify: restart incron
+  when: incron_restart
+  tags: ['incron', 'incron:configuration']
