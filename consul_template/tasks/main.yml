@@ -1,7 +1,9 @@
 ---
 
+# Workaround for bug in Ansible 2.0. Use `docker_image` module for Ansible 2.1
 - name: Pull consul-template image
-  docker_image: name="{{ consul_template_image }}" tag="{{ consul_template_image_tag }}"
+  #docker_image: name="{{ consul_template_image }}" tag="{{ consul_template_image_tag }}" state=present
+  shell: docker pull {{ consul_template_image }}:{{ consul_template_image_tag }}
   tags: ['consul_template', 'consul_template:install']
 
 - name: Copy systemd service file
@@ -10,7 +12,7 @@
     owner=root group=root
   notify:
     - reload systemd configuration
-    -  restart consul-template
+    - restart consul-template
   tags: ['consul_template', 'consul_template:configuration']
 
 - name: Enable consul-template service
