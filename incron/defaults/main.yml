@@ -1,0 +1,12 @@
+---
+
+# For incron usage, see the docs at  http://inotify.aiken.cz/?section=incron&page=doc&lang=en.
+# For a list of inotify event masks, see the inotify man page: https://linux.die.net/man/7/inotify.
+
+# Override this with a list of objects describing your jobs
+incron_jobs:
+  - path: "/tmp"
+    mask: "IN_CREATE,IN_DELETE,IN_MODIFY"
+    command:  "/bin/true"
+
+incron_restart: no
