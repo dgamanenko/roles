@@ -1,0 +1,28 @@
+---
+
+snort_base_url: "https://www.snort.org/downloads/snort"
+snort_version: "2.9.8.3"
+snort_daq_version: "2.0.6"
+snort_archive: "snort-{{ snort_version }}.tar.gz"
+snort_daq_archive: "daq-{{ snort_daq_version}}.tar.gz"
+snort_download_dir: "/tmp/snort"
+snort_prerequisites:
+  - bison
+  - build-essential
+  - flex
+  - libdumbnet-dev
+  - libpcap-dev
+  - libpcre3-dev
+  - zlib1g-dev
+
+snort_configs:
+  - "snort.conf"
+  - "classification.config"
+  - "reference.config"
+  - "gen-msg.map"
+snort_config_dir: "/etc/snort"
+snort_config_path: "{{ snort_config_dir }}/snort.conf"
+
+snort_home_network: "10.0.0.0/8"
+
+snort_restart: no

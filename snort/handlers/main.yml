@@ -1,0 +1,7 @@
+---
+
+- name: reload systemd configuration
+  command: systemctl daemon-reload
+
+- name: restart snort
+  service: name=snort state=restarted

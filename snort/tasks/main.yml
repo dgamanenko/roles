@@ -1,0 +1,117 @@
+---
+
+- name: Install prerequisites
+  apt: name="{{ item }}" state=present
+  with_items: snort_prerequisites
+  tags: ['snort', 'snort:install']
+
+#- name: Create temporary directory for download
+#  command: mktemp -d
+#  register: snort_tmp_dir
+#  tags: ['snort', 'snort:install']
+#
+- name: Create download directory
+  file: path="{{ snort_download_dir }}" state=directory mode=0755
+  tags: ['snort', 'snort:install']
+
+- name: Download md5 checksums
+  get_url: >
+    url="{{ snort_base_url }}/md5s"
+    dest="{{ snort_download_dir }}/md5s"
+  tags: ['snort', 'snort:install']
+
+- name: Download Snort DAQ
+  get_url: >
+    url="{{ snort_base_url }}/{{ snort_daq_archive }}"
+    dest="{{ snort_download_dir }}/{{ snort_daq_archive }}"
+  tags: ['snort', 'snort:install']
+
+- name: Download Snort
+  get_url: >
+    url="{{ snort_base_url }}/{{ snort_archive }}"
+    dest="{{ snort_download_dir }}/{{ snort_archive }}"
+  tags: ['snort', 'snort:install']
+
+- name: Verify checksum of Snort DAQ archive
+  shell: >
+    md5sum -c md5s 2>/dev/null | grep "{{ snort_daq_archive }}: OK"
+    chdir="{{ snort_download_dir }}"
+  tags: ['snort', 'snort:install']
+
+- name: Verify checksum of Snort archive
+  shell: >
+    md5sum -c md5s 2>/dev/null | grep "{{ snort_archive }}: OK"
+    chdir="{{ snort_download_dir }}"
+  tags: ['snort', 'snort:install']
+
+- name: Unarchive Snort DAQ
+  unarchive: >
+    src="{{ snort_download_dir  }}/{{ snort_daq_archive }}"
+    dest="{{ snort_download_dir }}"
+    copy=no
+  tags: ['snort', 'snort:install']
+
+- name: Unarchive Snort
+  unarchive: >
+    src="{{ snort_download_dir  }}/{{ snort_archive }}"
+    dest="{{ snort_download_dir }}"
+    copy=no
+  tags: ['snort', 'snort:install']
+
+- name: Install Snort DAQ
+  shell: >
+    ./configure && make && make install && ldconfig
+    chdir="{{ snort_download_dir }}/daq-{{ snort_daq_version }}"
+    creates="/usr/local/lib/daq/daq_pcap.so"
+  tags: ['snort', 'snort:install']
+
+- name: Install Snort
+  shell: >
+    ./configure --enable-sourcefire && make && make install && ldconfig
+    chdir="{{ snort_download_dir }}/snort-{{ snort_version }}"
+    creates="/usr/local/bin/snort"
+  tags: ['snort', 'snort:install']
+
+- name: Create Snort directories
+  file: path="{{ item }}" state=directory
+  with_items:
+    - "{{ snort_config_dir }}"
+    - "{{ snort_config_dir }}/preproc_rules"
+    - "{{ snort_config_dir }}/rules"
+    - "{{ snort_config_dir }}/so_rules"
+    - /var/log/snort
+  tags: ['snort', 'snort:configuration']
+
+- name: Copy config files
+  template: >
+    src="{{ item }}" dest="{{ snort_config_dir }}/{{ item | basename }}"
+  with_items: snort_configs
+  notify: restart snort
+  tags: ['snort', 'snort:configuration']
+
+- name: Download community rules
+  get_url: >
+    url="https://snort.org/downloads/community/community-rules.tar.gz"
+    dest="{{ snort_download_dir }}"
+  tags: ['snort', 'snort:configuration']
+
+- name: Copy systemd service file
+  template: src=snort.service dest=/etc/systemd/system/snort.service mode=0644
+  notify:
+    - reload systemd configuration
+    - restart snort
+  tags: ['snort', 'snort:configuration']
+
+- name: Enable Snort service
+  service: name=snort enabled=yes
+  tags: ['snort', 'snort:configuration']
+
+- name: Start Snort
+  service: name=snort state=started
+  tags: ['snort', 'snort:configuration']
+
+- name: Trigger handler to restart Snort
+  command: "/bin/true"
+  notify: restart snort
+  when: snort_restart
+  tags: ['snort', 'snort:configuration']
