@@ -1,0 +1,58 @@
+---
+
+- name: Install Pulled Pork prerequisites
+  apt: name="{{ item }}" state=present
+  with_items:
+    - libcrypt-ssleay-perl
+    - liblwp-protocol-https-perl
+  tags: ['snort', 'snort:install']
+
+- name: Download Pulled Pork
+  get_url: >
+    url="{{ snort_pulledpork_base_url }}/{{ snort_pulledpork_archive }}"
+    dest="{{ snort_download_dir }}/{{ snort_pulledpork_archive }}"
+  tags: ['snort', 'snort:install']
+
+- name: Unarchive Pulled Pork
+  unarchive: >
+    src="{{ snort_download_dir  }}/{{ snort_pulledpork_archive }}"
+    dest="{{ snort_download_dir }}"
+    copy=no
+  tags: ['snort', 'snort:install']
+
+- name: Install Pulled Pork
+  command: >
+    cp pulledpork.pl /usr/local/bin
+    chdir="{{ snort_download_dir }}/pulledpork-{{ snort_pulledpork_version }}"
+    creates="/usr/local/bin/pulledpork.pl"
+  tags: ['snort', 'snort:install']
+
+- name: Create Pulled Pork configuration directory
+  file: path="{{ snort_pulledpork_config_dir }}" state=directory
+  tags: ['snort', 'snort:configuration']
+
+- name: Copy Pulled Pork config file
+  template: >
+    src="{{ snort_pulledpork_config }}"
+    dest="{{ snort_pulledpork_config_dir }}/{{ snort_pulledpork_config | basename }}"
+  tags: ['snort', 'snort:configuration']
+
+- name: Create rules files
+  file: path="{{ snort_config_dir }}/rules/{{ item }}" state=touch
+  with_items:
+    - "snort.rules"
+    - "local.rules"
+  tags: ['snort', 'snort:configuration']
+
+- name: Update rules with Pulled Pork
+  command: pulledpork.pl -c {{ snort_pulledpork_config_dir }}/{{ snort_pulledpork_config }} -T
+  notify: restart snort
+  when: snort_pulledpork_run
+  tags: ['snort', 'snort:configuration']
+
+- name: Create cron job to update rules with Pulled Pork
+  cron: >
+    name="Update Snort rules"
+    special_time="daily"
+    job="/usr/local/bin/pulledpork.pl -c {{ snort_pulledpork_config_dir }}/{{ snort_pulledpork_config }} -T"
+  tags: ['snort', 'snort:configuration']

@@ -1,6 +1,6 @@
 ---
 
-snort_base_url: "https://www.snort.org/downloads/snort"
+snort_base_url: "https://snort.org/downloads/snort"
 snort_version: "2.9.8.3"
 snort_daq_version: "2.0.6"
 snort_archive: "snort-{{ snort_version }}.tar.gz"
@@ -19,10 +19,21 @@ snort_configs:
   - "snort.conf"
   - "classification.config"
   - "reference.config"
-  - "gen-msg.map"
 snort_config_dir: "/etc/snort"
 snort_config_path: "{{ snort_config_dir }}/snort.conf"
 
 snort_home_network: "10.0.0.0/8"
-
+snort_oinkcode: "oinkoink"
 snort_restart: no
+
+snort_pulledpork_base_url: "https://github.com/shirkdog/pulledpork/archive"
+snort_pulledpork_version: "0.7.2"
+snort_pulledpork_archive: "v{{ snort_pulledpork_version}}.tar.gz"
+snort_pulledpork_config: "pulledpork.conf"
+snort_pulledpork_config_dir: "/etc/pulledpork"
+snort_pulledpork_run: yes
+snort_pulledpork_rule_urls:
+  - "https://www.snort.org/reg-rules/|snortrules-snapshot.tar.gz|{{ snort_oinkcode }}"
+  - "https://snort.org/downloads/community/|community-rules.tar.gz|Community"
+  - "http://talosintelligence.com/feeds/ip-filter.blf|IPBLACKLIST|open"
+  - "https://www.snort.org/reg-rules/|opensource.gz|{{ snort_oinkcode }}"

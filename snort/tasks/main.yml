@@ -5,11 +5,6 @@
   with_items: snort_prerequisites
   tags: ['snort', 'snort:install']
 
-#- name: Create temporary directory for download
-#  command: mktemp -d
-#  register: snort_tmp_dir
-#  tags: ['snort', 'snort:install']
-#
 - name: Create download directory
   file: path="{{ snort_download_dir }}" state=directory mode=0755
   tags: ['snort', 'snort:install']
@@ -78,21 +73,27 @@
     - "{{ snort_config_dir }}"
     - "{{ snort_config_dir }}/preproc_rules"
     - "{{ snort_config_dir }}/rules"
+    - "{{ snort_config_dir }}/rules/iplists"
     - "{{ snort_config_dir }}/so_rules"
+    - "/usr/local/lib/snort_dynamicrules"
     - /var/log/snort
-  tags: ['snort', 'snort:configuration']
+  tags: ['snort', 'snort:install', 'snort:configuration']
+
+- name: Copy map files
+  command: >
+    cp {{ item }} {{ snort_config_dir }}
+    chdir="{{ snort_download_dir }}/snort-{{ snort_version }}/etc"
+    creates="{{ snort_config_dir }}/{{ item }}"
+  with_items:
+    - "gen-msg.map"
+    - "unicode.map"
+  notify: restart snort
+  tags: ['snort', 'snort:install']
 
 - name: Copy config files
-  template: >
-    src="{{ item }}" dest="{{ snort_config_dir }}/{{ item | basename }}"
+  template: src="{{ item }}" dest="{{ snort_config_dir }}/{{ item | basename }}"
   with_items: snort_configs
   notify: restart snort
-  tags: ['snort', 'snort:configuration']
-
-- name: Download community rules
-  get_url: >
-    url="https://snort.org/downloads/community/community-rules.tar.gz"
-    dest="{{ snort_download_dir }}"
   tags: ['snort', 'snort:configuration']
 
 - name: Copy systemd service file
@@ -115,3 +116,5 @@
   notify: restart snort
   when: snort_restart
   tags: ['snort', 'snort:configuration']
+
+- include: pulledpork.yml

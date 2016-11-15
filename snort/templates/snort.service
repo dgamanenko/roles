@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/usr/local/bin/snort -T -c {{ snort_config_path }}
+ExecStart=/usr/local/bin/snort -c {{ snort_config_path }}
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=5
