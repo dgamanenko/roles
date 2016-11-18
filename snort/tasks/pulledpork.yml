@@ -11,6 +11,7 @@
   get_url: >
     url="{{ snort_pulledpork_base_url }}/{{ snort_pulledpork_archive }}"
     dest="{{ snort_download_dir }}/{{ snort_pulledpork_archive }}"
+    checksum="{{ snort_pulledpork_checksum }}"
   tags: ['snort', 'snort:install']
 
 - name: Unarchive Pulled Pork
@@ -54,5 +55,5 @@
   cron: >
     name="Update Snort rules"
     special_time="daily"
-    job="/usr/local/bin/pulledpork.pl -c {{ snort_pulledpork_config_dir }}/{{ snort_pulledpork_config }} -T"
+    job="/usr/local/bin/pulledpork.pl -c {{ snort_pulledpork_config_dir }}/{{ snort_pulledpork_config }} -T -H"
   tags: ['snort', 'snort:configuration']

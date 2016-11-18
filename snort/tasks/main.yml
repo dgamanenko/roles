@@ -9,34 +9,18 @@
   file: path="{{ snort_download_dir }}" state=directory mode=0755
   tags: ['snort', 'snort:install']
 
-- name: Download md5 checksums
-  get_url: >
-    url="{{ snort_base_url }}/md5s"
-    dest="{{ snort_download_dir }}/md5s"
-  tags: ['snort', 'snort:install']
-
 - name: Download Snort DAQ
   get_url: >
     url="{{ snort_base_url }}/{{ snort_daq_archive }}"
     dest="{{ snort_download_dir }}/{{ snort_daq_archive }}"
+    checksum="{{ snort_daq_checksum }}"
   tags: ['snort', 'snort:install']
 
 - name: Download Snort
   get_url: >
     url="{{ snort_base_url }}/{{ snort_archive }}"
     dest="{{ snort_download_dir }}/{{ snort_archive }}"
-  tags: ['snort', 'snort:install']
-
-- name: Verify checksum of Snort DAQ archive
-  shell: >
-    md5sum -c md5s 2>/dev/null | grep "{{ snort_daq_archive }}: OK"
-    chdir="{{ snort_download_dir }}"
-  tags: ['snort', 'snort:install']
-
-- name: Verify checksum of Snort archive
-  shell: >
-    md5sum -c md5s 2>/dev/null | grep "{{ snort_archive }}: OK"
-    chdir="{{ snort_download_dir }}"
+    checksum="{{ snort_checksum }}"
   tags: ['snort', 'snort:install']
 
 - name: Unarchive Snort DAQ
@@ -76,19 +60,8 @@
     - "{{ snort_config_dir }}/rules/iplists"
     - "{{ snort_config_dir }}/so_rules"
     - "/usr/local/lib/snort_dynamicrules"
-    - /var/log/snort
+    - "/var/log/snort"
   tags: ['snort', 'snort:install', 'snort:configuration']
-
-- name: Copy map files
-  command: >
-    cp {{ item }} {{ snort_config_dir }}
-    chdir="{{ snort_download_dir }}/snort-{{ snort_version }}/etc"
-    creates="{{ snort_config_dir }}/{{ item }}"
-  with_items:
-    - "gen-msg.map"
-    - "unicode.map"
-  notify: restart snort
-  tags: ['snort', 'snort:install']
 
 - name: Copy config files
   template: src="{{ item }}" dest="{{ snort_config_dir }}/{{ item | basename }}"
@@ -114,7 +87,7 @@
 - name: Trigger handler to restart Snort
   command: "/bin/true"
   notify: restart snort
-  when: snort_restart
+  when: snort_force_restart
   tags: ['snort', 'snort:configuration']
 
 - include: pulledpork.yml
