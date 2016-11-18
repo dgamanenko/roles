@@ -1,0 +1,11 @@
+---
+
+- name: reload systemd configuration
+  command: systemctl daemon-reload
+
+- name: restart ossec
+  service: name=ossec state=restarted
+
+- name: restart ossec-authd
+  service: name=ossec-authd state=restarted
+  when: ossec_authd_state != "stopped"
