@@ -69,6 +69,12 @@
   notify: restart snort
   tags: ['snort', 'snort:configuration']
 
+- name: Copy custom rules
+  template: src="{{ item }}" dest="{{ snort_config_dir }}/rules/{{ item | basename }}"
+  notify: restart snort
+  with_items: snort_custom_rules_files
+  tags: ['snort', 'snort:configuration']
+
 - name: Copy systemd service file
   template: src=snort.service dest=/etc/systemd/system/snort.service mode=0644
   notify:
