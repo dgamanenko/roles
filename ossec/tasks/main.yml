@@ -50,6 +50,18 @@
   when: ossec_install_type == "server"
   tags: ['ossec', 'ossec:configuration']
 
+- name: Copy server config file
+  template: src="{{ ossec_server_config }}" dest="/var/ossec/etc/{{ ossec_server_config | basename }}"
+  notify: restart ossec
+  when: ossec_install_type == "server" and ossec_server_config != ""
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Copy agent config file
+  template: src="{{ ossec_agent_config }}" dest="/var/ossec/etc/{{ ossec_agent_config | basename }}"
+  notify: restart ossec
+  when: ossec_install_type == "agent" and ossec_agent_config != ""
+  tags: ['ossec', 'ossec:configuration']
+
 - name: Copy systemd service file for ossec-authd
   template: src=ossec-authd.service dest=/etc/systemd/system/ossec-authd.service mode=0644
   notify:

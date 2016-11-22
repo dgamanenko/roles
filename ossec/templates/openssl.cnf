@@ -4,10 +4,4 @@ distinguished_name     = req_distinguished_name
 prompt                 = no
 
 [ req_distinguished_name ]
-C                      =
-ST                     =
-L                      =
-O                      =
-OU                     =
-CN                     =
-emailAddress           =
+C                      = US
