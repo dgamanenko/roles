@@ -1,0 +1,83 @@
+---
+
+- name: Install prerequisites
+  apt: name="{{ item }}" state=present
+  with_items: ossec_prerequisites
+  tags: ['ossec', 'ossec:install']
+
+- name: Create download directory
+  file: path="{{ ossec_download_dir }}" state=directory mode=0755
+  tags: ['ossec', 'ossec:install']
+
+- name: Download OSSEC
+  get_url: >
+    url="{{ ossec_base_url }}/{{ ossec_archive }}"
+    dest="{{ ossec_download_dir }}/{{ ossec_archive }}"
+    checksum="{{ ossec_checksum }}"
+  tags: ['ossec', 'ossec:install']
+
+- name: Unarchive OSSEC
+  unarchive: >
+    src="{{ ossec_download_dir  }}/{{ ossec_archive }}"
+    dest="{{ ossec_download_dir }}"
+    copy=no
+  tags: ['ossec', 'ossec:install']
+
+- name: Set build configuration options
+  template: >
+    src="preloaded-vars.conf"
+    dest="{{ ossec_download_dir }}/ossec-hids-{{ ossec_version }}/etc/preloaded-vars.conf"
+  tags: ['ossec', 'ossec:install']
+
+- name: Install OSSEC
+  command: >
+    "{{ ossec_download_dir }}/ossec-hids-{{ ossec_version }}/install.sh"
+    chdir="{{ ossec_download_dir }}/ossec-hids-{{ ossec_version }}"
+    creates="/var/ossec/bin/ossec-control"
+  tags: ['ossec', 'ossec:install']
+
+- name: Copy OpenSSL configuration
+  template: src="{{ ossec_openssl_config }}" dest="{{ ossec_download_dir }}/{{ ossec_openssl_config | basename }}"
+  when: ossec_install_type == "server"
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Generate TLS certificate
+  command: >
+    openssl req -x509 -days 3650 -newkey rsa:4096 -nodes -sha256
+    -keyout /var/ossec/etc/sslmanager.key -out /var/ossec/etc/sslmanager.cert
+    -config {{ ossec_download_dir }}/{{ ossec_openssl_config | basename }}
+    creates=/var/ossec/etc/sslmanager.cert
+  when: ossec_install_type == "server"
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Copy systemd service file for ossec-authd
+  template: src=ossec-authd.service dest=/etc/systemd/system/ossec-authd.service mode=0644
+  notify:
+    - reload systemd configuration
+    - restart ossec-authd
+  when: ossec_install_type == "server"
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Set state of ossec-authd service
+  service: name=ossec-authd state="{{ ossec_authd_state }}" enabled="{{ ossec_authd_enabled }}"
+  when: ossec_install_type == "server"
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Obtain agent key
+  command: >
+    /var/ossec/bin/agent-auth -m {{ ossec_server_ip }} -p {{ ossec_authd_port }}
+    creates="/var/ossec/etc/client.keys"
+  notify: restart ossec
+  when: ossec_install_type == "agent"
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Start OSSEC
+  service: name=ossec state=started
+  tags: ['ossec', 'ossec:configuration']
+
+- name: Trigger handler to restart OSSEC
+  command: "/bin/true"
+  notify: restart ossec
+  when: ossec_force_restart
+  tags: ['ossec', 'ossec:configuration']
+
