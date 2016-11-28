@@ -1,0 +1,3 @@
+{% for rule in snort_custom_rules %}
+{{ rule }}
+{% endfor %}
