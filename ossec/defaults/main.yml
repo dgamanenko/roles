@@ -15,18 +15,41 @@ ossec_prerequisites:
 ossec_install_type: "agent"
 ossec_language: "en"
 ossec_host_ip: "{{ ansible_default_ipv4.address }}"
-ossec_syscheck_enabled: "y"
-ossec_rootcheck_enabled: "y"
-ossec_active_response_enabled: "n"
-ossec_alert_email_enabled: "n"
+ossec_alert_email_enabled: "no"
 ossec_alert_email_address: ""
 ossec_alert_email_smtp: ""
 ossec_remote_syslog_enabled: "n"
-ossec_firewall_response_enabled: "n"
 ossec_ip_whitelist: "10.0.0.0/8"
+ossec_server_config: "server/ossec.conf"
+ossec_agent_config: "agent/ossec.conf"
 ossec_openssl_config: "openssl.cnf"
 ossec_authd_port: 1515
 ossec_authd_state: "started"
 ossec_authd_enabled: yes
 ossec_server_ip: ""
 ossec_force_restart: no
+
+# syscheck (file integrity checking)
+ossec_syscheck_enabled: "y"
+ossec_syscheck_directories: []
+ossec_syscheck_ignore: []
+
+# rootcheck (check for rootkits)
+ossec_rootcheck_enabled: "y"
+
+# active response (make changes to the system automatically)
+ossec_active_response_enabled: "n"
+ossec_firewall_response_enabled: "n"
+
+# log monitoring
+ossec_log_files:
+  - {location: "/var/log/auth.log", log_format: "syslog"}
+  - {location: "/var/log/syslog", log_format: "syslog"}
+  - {location: "/var/log/dpkg.log", log_format: "syslog"}
+  - {location: "/var/log/snort/alert", log_format: "snort-full"}
+  - {location: "/var/log/nginx/access.log", log_format: "apache"}
+  - {location: "/var/log/nginx/error.log", log_format: "apache"}
+ossec_log_commands:
+  - {command: "df -h", log_format: "command"}
+  - {command: "netstat -tan |grep LISTEN |grep -v 127.0.0.1 | sort", log_format: "command"}
+  - {command: "last -n 5", log_format: "full_command"}
