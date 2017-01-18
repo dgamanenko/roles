@@ -1,0 +1,2 @@
+SNORT_TIMESTAMP %{INT:month}/%{INT:day}-%{INT:hour}:%{INT:minute}:%{INT:second}\.%{INT:microseconds}
+SNORT %{SNORT_TIMESTAMP}%{SPACE}\[\*\*\] \[%{INT:gid}:%{INT:sid}:%{INT:rev}] %{DATA:message} \[\*\*\] \[Priority: %{INT:priority}\] \{%{WORD:protocol}\} %{IPV4:src}(:%{INT:src_port})? -> %{IPV4:dest}(:%{INT:dest_port})?

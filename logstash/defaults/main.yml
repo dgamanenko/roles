@@ -16,10 +16,12 @@ logstash_default_configs:
   - "20_openedx_filter.conf"
   - "20_postgresql_filter.conf"
   - "20_redis_filter.conf"
+  - "20_snort_filter.conf"
   - "20_syslog_filter.conf"
   - "20_uwsgi_filter.conf"
   - "24_grokparsefailure_filter.conf"
   - "30_elasticsearch_output.conf"
+  - "30_pagerduty_output.conf"
 logstash_custom_configs: []
 
 logstash_remove_patterns: no
@@ -33,6 +35,7 @@ logstash_default_patterns:
   - "openedx"
   - "postgresql"
   - "redis"
+  - "snort"
   - "uwsgi"
 logstash_custom_patterns: []
 
