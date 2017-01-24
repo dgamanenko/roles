@@ -1,11 +1,11 @@
 ---
 
 snort_base_url: "https://snort.org/downloads/snort"
-snort_version: "2.9.8.3"
+snort_version: "2.9.9.0"
 snort_daq_version: "2.0.6"
 snort_archive: "snort-{{ snort_version }}.tar.gz"
 snort_daq_archive: "daq-{{ snort_daq_version}}.tar.gz"
-snort_checksum: "sha256:856d02ccec49fa30c920a1e416c47c0d62dd224340a614959ba5c03239100e6a"
+snort_checksum: "sha256:71b147125e96390a12f3d55796ed5073df77206bd3563d84d3e5a1f19e7d7a56"
 snort_daq_checksum: "sha256:b40e1d1273e08aaeaa86e69d4f28d535b7e53bdb3898adf539266b63137be7cb"
 snort_download_dir: "/tmp/snort"
 snort_prerequisites:
