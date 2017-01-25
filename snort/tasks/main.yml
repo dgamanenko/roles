@@ -80,6 +80,14 @@
   notify:
     - reload systemd configuration
     - restart snort
+  when: ansible_service_mgr == "systemd"
+  tags: ['snort', 'snort:configuration']
+
+- name: Copy upstart service file
+  template: src=snort_upstart.conf dest=/etc/init/snort.conf mode=0644
+  notify:
+    - restart snort
+  when: ansible_service_mgr == "upstart"
   tags: ['snort', 'snort:configuration']
 
 - name: Enable Snort service
