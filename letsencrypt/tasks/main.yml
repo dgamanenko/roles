@@ -1,0 +1,67 @@
+---
+
+- name: Install Let's Encrypt
+  apt: name="letsencrypt"
+  tags: ['letsencrypt']
+
+- name: Create Let's Encrypt directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ letsencrypt_webuser }}"
+    group: "{{ letsencrypt_webuser }}"
+  with_items: 
+    - "/etc/letsencrypt"
+    - "/var/log/letsencrypt"
+    - "/var/lib/letsencrypt"
+  tags: ['letsencrypt']
+
+- name: Create Let's Encrypt webroot directory
+  file: 
+    state: directory
+    path: "{{ letsencrypt_webroot }}"
+    owner: "{{ letsencrypt_webuser }}"
+    group: "{{ letsencrypt_webuser }}"
+  become: True
+  become_user: "{{ letsencrypt_webuser }}"
+  tags: ['letsencrypt']
+
+- name: Copy nginx config
+  template:
+    src: "{{ letsencrypt_webserver_config }}"
+    dest: "{{ letsencrypt_webserver_sites_available }}/{{ letsencrypt_webserver_config | basename }}"
+  when: letsencrypt_webserver == "nginx"
+  tags: ['letsencrypt']
+
+- name: Enable nginx config
+  file:
+    state: link
+    path: "{{ letsencrypt_webserver_sites_enabled }}/{{ letsencrypt_webserver_config | basename }}"
+    src: "{{ letsencrypt_webserver_sites_available }}/{{ letsencrypt_webserver_config | basename }}"
+  when: letsencrypt_webserver == "nginx"
+  tags: ['letsencrypt']
+
+- name: Reload nginx
+  service: name=nginx state=reloaded
+  when: letsencrypt_webserver == "nginx"
+  tags: ['letsencrypt']
+
+- name: Generate certificates using webroot
+  command: >
+    letsencrypt certonly {{ letsencrypt_flags }} --agree-tos -m "{{ letsencrypt_email }}"
+    --webroot -w "{{ letsencrypt_webroot }}" -d {{ item.domains | join(' -d ') }}
+  args:
+    creates: /etc/letsencrypt/live/{{ item.domains[0] }}/fullchain.pem
+  with_items: "{{ letsencrypt_certs }}"
+  become: True
+  become_user: "{{ letsencrypt_webuser }}"
+  tags: ['letsencrypt']
+
+- name: Create cron job to renew certificates
+  cron: >
+    name="Let's Encrypt certificate renewal"
+    cron_file="letsencrypt"
+    special_time="daily"
+    user="root"
+    job="letsencrypt renew --agree-tos"
+  tags: ['letsencrypt']

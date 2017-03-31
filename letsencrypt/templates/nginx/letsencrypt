@@ -1,0 +1,21 @@
+{% set domains = [] %}
+{% for item in letsencrypt_certs %}
+{% set domains = domains.extend(item.domains) %}
+{% endfor %}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ domains | unique | join(' ') }};
+
+    location '/.well-known/acme-challenge' {
+        default_type "text/plain";
+        root {{ letsencrypt_webroot }};
+    }
+
+{% if letsencrypt_https_redirect %}
+    location / {
+        # Redirect to https
+        return 301 https://$host$request_uri;
+    }
+{% endif %}
+}
