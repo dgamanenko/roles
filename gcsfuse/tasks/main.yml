@@ -48,4 +48,14 @@
   become: True
   become_user: "{{ item.owner | default('root') }}"
   with_items: "{{ gcsfuse_mounts }}"
-  tags: ['gcsfuse', 'gcsfuse:configuration', 'morgan']
+  tags: ['gcsfuse', 'gcsfuse:configuration']
+
+- name: Mount buckets on reboot
+  cron:
+    name: "Mount bucket `{{ item.bucket }}` at `{{ item.path }}`"
+    cron_file: "gcsfuse"
+    special_time: "reboot"
+    job: gcsfuse {{ (item.keyfile != None) | ternary("--key-file " + item.keyfile, "") }} "{{ item.bucket }}" "{{ item.path }}" && touch "{{ item.path }}/.mounted"
+    user: "{{ item.owner | default('root') }}"
+  with_items: "{{ gcsfuse_mounts }}"
+  tags: ['gcsfuse', 'gcsfuse:configuration']
