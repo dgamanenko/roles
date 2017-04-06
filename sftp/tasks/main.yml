@@ -8,14 +8,14 @@
   file: >
     path="{{ item.chroot }}" state=directory
     owner=root group="{{ sftp_group }}" mode=0755
-  with_items: sftp_users
+  with_items: "{{ sftp_users }}"
   tags: ['sftp']
 
 - name: Create restricted sftp users
   user: >
     name="{{ item.name }}" groups="{{ sftp_group }}"
     home="{{ item.chroot }}" shell="/sbin/nologin"
-  with_items: sftp_users
+  with_items: "{{ sftp_users }}"
   tags: ['sftp']
 
 - name: Create writable directories in the chroot
@@ -31,7 +31,7 @@
   authorized_key: >
     user={{ item.name }}
     key={{ item.pubkey }}
-  with_items: sftp_users
+  with_items: "{{ sftp_users }}"
   tags: ['sftp']
 
 - name: Configure sftp settings

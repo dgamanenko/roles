@@ -35,7 +35,7 @@
   copy: >
     src="{{ item }}" dest="{{ consul_template_template_dir }}/{{ item | basename }}"
   notify: restart consul-template
-  with_items: consul_template_templates
+  with_items: "{{ consul_template_templates }}"
   tags: ['consul_template', 'consul_template:configuration']
 
 - name: Enable consul-template service

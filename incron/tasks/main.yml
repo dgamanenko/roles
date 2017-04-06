@@ -10,7 +10,7 @@
       create=yes
       line="{{ item.path }} {{ item.mask }} {{ item.command }}"
       state=present
-  with_items: incron_jobs
+  with_items: "{{ incron_jobs }}"
   notify: restart incron
   tags: ['incron', 'incron:configuration']
 

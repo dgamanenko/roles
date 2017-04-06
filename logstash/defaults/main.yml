@@ -1,6 +1,6 @@
 ---
 
-logstash_repo: "deb https://packages.elastic.co/logstash/2.3/debian stable main"
+logstash_repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
 logstash_apt_key_id: "46095ACC8548582C1A2699A9D27D666CD88E42B4"
 logstash_package: "logstash"
 
@@ -47,6 +47,8 @@ logstash_output_elasticsearch_hosts:
   - "localhost:9200"
 logstash_output_elasticsearch_user: ""
 logstash_output_elasticsearch_password: ""
+logstash_output_pagerduty_alerts: []
+logstash_output_pagerduty_service_key: ""
 
 logstash_restart: no
 

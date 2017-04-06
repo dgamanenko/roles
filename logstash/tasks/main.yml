@@ -32,13 +32,13 @@
 
 - name: Copy default logstash configuration files
   template: src="{{ item }}" dest="{{ logstash_config_dir }}/{{ item | basename }}"
-  with_items: logstash_default_configs
+  with_items: "{{ logstash_default_configs }}"
   notify: restart logstash
   tags: ['logstash', 'logstash:configuration']
 
 - name: Copy custom logstash configuration files
   template: src="{{ item }}" dest="{{ logstash_config_dir }}/{{ item | basename }}"
-  with_items: logstash_custom_configs
+  with_items: "{{ logstash_custom_configs }}"
   notify: restart logstash
   tags: ['logstash', 'logstash:configuration']
 
@@ -48,13 +48,13 @@
 
 - name: Copy default logstash patterns
   copy: src="{{ item }}" dest="{{ logstash_pattern_dir }}/{{ item | basename }}"
-  with_items: logstash_default_patterns
+  with_items: "{{ logstash_default_patterns }}"
   notify: restart logstash
   tags: ['logstash', 'logstash:configuration']
 
 - name: Copy custom logstash patterns
   copy: src="{{ item }}" dest="{{ logstash_pattern_dir }}/{{ item | basename }}"
-  with_items: logstash_custom_patterns
+  with_items: "{{ logstash_custom_patterns }}"
   notify: restart logstash
   tags: ['logstash', 'logstash:configuration']
 
