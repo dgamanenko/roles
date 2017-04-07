@@ -1,7 +1,7 @@
 ---
 
 - name: Install Let's Encrypt
-  apt: name="letsencrypt"
+  apt: name="{{ letsencrypt_package }}"
   tags: ['letsencrypt']
 
 - name: Create Let's Encrypt directories
@@ -48,7 +48,7 @@
 
 - name: Generate certificates using webroot
   command: >
-    letsencrypt certonly {{ letsencrypt_flags }} --agree-tos -m "{{ letsencrypt_email }}"
+    {{ letsencrypt_command }} certonly {{ letsencrypt_flags }} --agree-tos -m "{{ letsencrypt_email }}"
     --webroot -w "{{ letsencrypt_webroot }}" -d {{ item.domains | join(' -d ') }}
   args:
     creates: /etc/letsencrypt/live/{{ item.domains[0] }}/fullchain.pem
@@ -63,5 +63,5 @@
     cron_file="letsencrypt"
     special_time="daily"
     user="root"
-    job="letsencrypt renew --agree-tos"
+    job="{{ letsencrypt_command }} renew --agree-tos"
   tags: ['letsencrypt']
