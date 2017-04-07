@@ -1,11 +1,11 @@
 ---
 
-- name: Add logstash repo
-  apt_repository: repo="{{ logstash_repo }}" state=present
-  tags: ['logstash', 'logstash:install']
-
 - name: Add logstash repository key
   apt_key: keyserver=pgp.mit.edu id="{{ logstash_apt_key_id }}"
+  tags: ['logstash', 'logstash:install']
+
+- name: Add logstash repo
+  apt_repository: repo="{{ logstash_repo }}" state=present
   tags: ['logstash', 'logstash:install']
 
 - name: Update apt cache
