@@ -1,0 +1,19 @@
+---
+
+letsencrypt_package: "letsencrypt"
+letsencrypt_command: "letsencrypt"
+letsencrypt_webroot: "/var/www/letsencrypt"
+letsencrypt_webuser: "www-data"
+letsencrypt_webserver: "nginx"
+letsencrypt_webserver_config: "nginx/letsencrypt"
+letsencrypt_webserver_sites_available: "/etc/nginx/sites-available"
+letsencrypt_webserver_sites_enabled: "/etc/nginx/sites-enabled"
+letsencrypt_https_redirect: false
+letsencrypt_email: !!null
+letsencrypt_certs: []
+letsencrypt_flags: ""
+
+# This must be a list of hashes, where each hash represents a single certificate
+# letsencrypt_certs:
+#   - domains: ["foo.example.com", "bar.example.com"]
+#   - domains: ["baz.example.com"]
