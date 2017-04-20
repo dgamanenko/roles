@@ -1,6 +1,6 @@
 ---
 
-filebeat_repo: "deb https://packages.elastic.co/beats/apt stable main"
+filebeat_repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
 filebeat_apt_key_id: "46095ACC8548582C1A2699A9D27D666CD88E42B4"
 filebeat_package: "filebeat"
 filebeat_config_dir: "/etc/filebeat"

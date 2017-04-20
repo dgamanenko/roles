@@ -2,7 +2,7 @@
 
 - name: Install prerequisites
   apt: name="{{ item }}" state=present
-  with_items: snort_prerequisites
+  with_items: "{{ snort_prerequisites }}"
   tags: ['snort', 'snort:install']
 
 - name: Create download directory
@@ -65,14 +65,14 @@
 
 - name: Copy config files
   template: src="{{ item }}" dest="{{ snort_config_dir }}/{{ item | basename }}"
-  with_items: snort_configs
+  with_items: "{{ snort_configs }}"
   notify: restart snort
   tags: ['snort', 'snort:configuration']
 
 - name: Copy custom rules
   template: src="{{ item }}" dest="{{ snort_config_dir }}/rules/{{ item | basename }}"
   notify: restart snort
-  with_items: snort_custom_rules_files
+  with_items: "{{ snort_custom_rules_files }}"
   tags: ['snort', 'snort:configuration']
 
 - name: Copy systemd service file

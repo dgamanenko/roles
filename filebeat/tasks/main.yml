@@ -1,11 +1,11 @@
 ---
 
-- name: Add filebeat repo
-  apt_repository: repo="{{ filebeat_repo }}" state=present
-  tags: ['filebeat', 'filebeat:install']
-
 - name: Add filebeat repository key
   apt_key: keyserver=pgp.mit.edu id="{{ filebeat_apt_key_id }}"
+  tags: ['filebeat', 'filebeat:install']
+
+- name: Add filebeat repo
+  apt_repository: repo="{{ filebeat_repo }}" state=present
   tags: ['filebeat', 'filebeat:install']
 
 - name: Update apt cache
