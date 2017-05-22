@@ -1,0 +1,41 @@
+---
+
+- name: Install monit
+  apt: name="{{ monit_package }}"
+  tags: ['monit', 'monit:install']
+
+- name: Copy monitrc config file
+  template:
+    src: "{{ monit_monitrc }}"
+    dest: "{{ monit_config_dir }}/monitrc"
+    mode: 0600
+  notify: restart monit
+  when: monit_monitrc != ""
+  tags: ['monit', 'monit:configuration']
+
+- name: Copy extra config files
+  template: src="{{ item }}" dest="{{ monit_extra_config_dir }}/{{ item | basename }}"
+  with_items: "{{ monit_extra_configs }}"
+  notify: restart monit
+  tags: ['monit', 'monit:configuration']
+
+- name: Copy alert logging script
+  template:
+    src: "log-monit-alert"
+    dest: "/usr/local/bin/log-monit-alert"
+    mode: 0755
+  tags: ['monit', 'monit:configuration']
+
+- name: Enable monit service
+  service: name=monit enabled=yes
+  tags: ['monit', 'monit:configuration']
+
+- name: Start monit
+  service: name=monit state=started
+  tags: ['monit', 'monit:configuration']
+
+- name: Trigger handler to restart monit
+  command: "/bin/true"
+  notify: restart monit
+  when: monit_force_restart
+  tags: ['monit', 'monit:configuration']

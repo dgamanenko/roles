@@ -1,0 +1,2 @@
+MONIT_TIMESTAMP %{WORD:timezone}%{SPACE}%{WORD:month}%{SPACE}%{INT:day}%{SPACE}%{INT:hour}:%{INT:minute}:%{INT:second}
+MONIT \[%{MONIT_TIMESTAMP}\]%{SPACE}%{WORD:level}%{SPACE}:%{SPACE}%{GREEDYDATA:message}

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+LEVEL=$1
+MESSAGE=$2
+
+echo \[UTC `date -u +"%b %d %H:%M:%S"`\] $LEVEL : $MESSAGE >> {{ monit_log_path }}
