@@ -5,7 +5,6 @@ site_description: "Curated Ansible roles with an emphasis on sane defaults, exte
 pages:
   - 'Installation': index.md
   - 'Best Practices': best-practices.md
-  - 'Roles': roles.md
 theme: readthedocs
 markdown_extensions:
   - toc:
