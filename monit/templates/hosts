@@ -1,0 +1,21 @@
+{% for check_host in monit_check_hosts %}
+check host {{ loop.index }}-{{ check_host.host | default(monit_check_hosts_defaults.host) }} address {{ check_host.host | default(monit_check_hosts_defaults.host) }}
+  if failed
+{% if "port" in check_host or "port" in monit_check_hosts_defaults %}
+    port {{ check_host.port | default(monit_check_hosts_defaults.port) }}
+{% endif %}
+{% if "protocol" in check_host or "protocol" in monit_check_hosts_defaults %}
+    protocol {{ check_host.protocol | default(monit_check_hosts_defaults.protocol) }}
+{% endif %}
+{% if "status" in check_host or "status" in monit_check_hosts_defaults %}
+    status = {{ check_host.status | default(monit_check_hosts_defaults.status) }}
+{% endif %}
+{% if "content" in check_host or "content" in monit_check_hosts_defaults %}
+    content = {{ check_host.content | default(monit_check_hosts_defaults.content) }}
+{% endif %}
+{% if "request" in check_host or "request" in monit_check_hosts_defaults %}
+    request "{{ check_host.request | default(monit_check_hosts_defaults.request) }}"
+{% endif %}
+  for {{ monit_alert_cycles }} cycles
+  then exec "/usr/local/bin/log-monit-alert trigger-hosts 'Check failed for {{ check_host.host | default(monit_check_hosts_defaults.host) }}{{ check_host.request }}'"
+{% endfor %}

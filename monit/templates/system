@@ -1,16 +1,16 @@
 check system {{ ansible_hostname }}
 {% if monit_check_cpu_usage %}
-  if cpu usage > {{ monit_cpu_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger 'CPU usage > {{ monit_cpu_usage }}'"
+  if cpu usage > {{ monit_cpu_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger-system 'CPU usage > {{ monit_cpu_usage }}'"
 {% endif %}
 {% if monit_check_memory_usage %}
-  if memory usage > {{ monit_memory_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger 'Memory usage > {{ monit_memory_usage }}'"
+  if memory usage > {{ monit_memory_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger-system 'Memory usage > {{ monit_memory_usage }}'"
 {% endif %}
 
 check filesystem root with path {{ monit_disk_root }}
 {% if monit_check_disk_usage %}
-  if space usage > {{ monit_disk_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger 'Disk usage > {{ monit_disk_usage }}'"
+  if space usage > {{ monit_disk_usage }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger-system 'Disk usage > {{ monit_disk_usage }}'"
 {% endif %}
 {% if monit_check_disk_io %}
-  if read rate > {{ monit_disk_read_rate }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger 'Disk read rate > {{ monit_disk_read_rate }}'"
-  if write rate > {{ monit_disk_write_rate }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger 'Disk write rate > {{ monit_disk_write_rate }}'"
+  if read rate > {{ monit_disk_read_rate }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger-system 'Disk read rate > {{ monit_disk_read_rate }}'"
+  if write rate > {{ monit_disk_write_rate }} for {{ monit_alert_cycles }} cycles then exec "/usr/local/bin/log-monit-alert trigger-system 'Disk write rate > {{ monit_disk_write_rate }}'"
 {% endif %}
