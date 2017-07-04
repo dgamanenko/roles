@@ -10,14 +10,14 @@
     path: "{{ item }}"
     owner: "{{ letsencrypt_webuser }}"
     group: "{{ letsencrypt_webuser }}"
-  with_items: 
+  with_items:
     - "/etc/letsencrypt"
     - "/var/log/letsencrypt"
     - "/var/lib/letsencrypt"
   tags: ['letsencrypt']
 
 - name: Create Let's Encrypt webroot directory
-  file: 
+  file:
     state: directory
     path: "{{ letsencrypt_webroot }}"
     owner: "{{ letsencrypt_webuser }}"
@@ -57,11 +57,17 @@
   become_user: "{{ letsencrypt_webuser }}"
   tags: ['letsencrypt']
 
-- name: Create cron job to renew certificates
-  cron: >
-    name="Let's Encrypt certificate renewal"
-    cron_file="letsencrypt"
-    special_time="daily"
-    user="root"
-    job="{{ letsencrypt_command }} renew --agree-tos"
-  tags: ['letsencrypt']
+- name: Make sure certbot systemd override dir exists
+  file: path=/etc/systemd/system/certbot.service.d state=directory
+  tags:
+    - letsencrypt
+
+- name: Make sure to restart service on certbot/ssl renewal
+  copy:
+    src=certbot_override.conf
+    dest=/etc/systemd/system/certbot.service.d/certbot.conf
+  notify:
+    - reload systemd configuration
+  tags:
+    - letsencrypt
+
