@@ -5,6 +5,7 @@ monit_config_dir: "/etc/monit"
 monit_monitrc: "monitrc"
 monit_extra_config_dir: "{{ monit_config_dir }}/conf.d"
 monit_extra_configs:
+  - "hosts"
   - "system"
 
 monit_log_path: "/var/log/monit.log"
@@ -22,5 +23,24 @@ monit_disk_usage: "90%"
 monit_disk_read_rate: "10 MB/s"
 monit_disk_write_rate: "10 MB/s"
 monit_alert_action: "alert"
+
+monit_check_hosts: []
+# List of hashes. Optionally specify host, port, protocol, status, content, and
+# request in each hash
+# monit_check_hosts:
+#    - host: example.com
+#      port: 443
+#      protocol: https
+#      status: 200
+#      request: /path/to/resource
+
+monit_check_hosts_defaults: {}
+# Defaults so that not every key needs to be specified in each item of
+# monit_check_hosts. Optionally specify host, port, protocol, status, content,
+# and request
+# monit_check_hosts_defaults:
+#   host: example.com
+#   protocol: http
+#   port: 80
 
 monit_force_restart: no
