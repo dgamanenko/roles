@@ -1,4 +1,8 @@
 ---
+- name: Add certbot repo
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+    state: present
 
 - name: Install Let's Encrypt
   apt: name="{{ letsencrypt_package }}"
