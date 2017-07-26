@@ -62,6 +62,7 @@
   with_items: "{{ letsencrypt_certs }}"
   become: True
   become_user: "{{ letsencrypt_webuser }}"
+  when: letsencrypt_run|bool == true
   tags: ['letsencrypt', 'letsencrypt:run']
 
 - name: Make sure certbot systemd override dir exists
