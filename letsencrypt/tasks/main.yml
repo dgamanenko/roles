@@ -1,8 +1,15 @@
 ---
+- name: Add certbot repo
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+    state: present
+  tags:
+    - letsencrypt
+    - letsencrypt:install
 
 - name: Install Let's Encrypt
   apt: name="{{ letsencrypt_package }}"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:install']
 
 - name: Create Let's Encrypt directories
   file:
@@ -10,28 +17,28 @@
     path: "{{ item }}"
     owner: "{{ letsencrypt_webuser }}"
     group: "{{ letsencrypt_webuser }}"
-  with_items: 
+  with_items:
     - "/etc/letsencrypt"
     - "/var/log/letsencrypt"
     - "/var/lib/letsencrypt"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:configuration']
 
 - name: Create Let's Encrypt webroot directory
-  file: 
+  file:
     state: directory
     path: "{{ letsencrypt_webroot }}"
     owner: "{{ letsencrypt_webuser }}"
     group: "{{ letsencrypt_webuser }}"
   become: True
   become_user: "{{ letsencrypt_webuser }}"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:configuration']
 
 - name: Copy nginx config
   template:
     src: "{{ letsencrypt_webserver_config }}"
     dest: "{{ letsencrypt_webserver_sites_available }}/{{ letsencrypt_webserver_config | basename }}"
   when: letsencrypt_webserver == "nginx"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:configuration']
 
 - name: Enable nginx config
   file:
@@ -39,12 +46,12 @@
     path: "{{ letsencrypt_webserver_sites_enabled }}/{{ letsencrypt_webserver_config | basename }}"
     src: "{{ letsencrypt_webserver_sites_available }}/{{ letsencrypt_webserver_config | basename }}"
   when: letsencrypt_webserver == "nginx"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:configuration']
 
 - name: Reload nginx
   service: name=nginx state=reloaded
   when: letsencrypt_webserver == "nginx"
-  tags: ['letsencrypt']
+  tags: ['letsencrypt', 'letsencrypt:configuration']
 
 - name: Generate certificates using webroot
   command: >
@@ -55,13 +62,22 @@
   with_items: "{{ letsencrypt_certs }}"
   become: True
   become_user: "{{ letsencrypt_webuser }}"
-  tags: ['letsencrypt']
+  when: letsencrypt_run|bool == true
+  tags: ['letsencrypt', 'letsencrypt:run']
 
-- name: Create cron job to renew certificates
-  cron: >
-    name="Let's Encrypt certificate renewal"
-    cron_file="letsencrypt"
-    special_time="daily"
-    user="root"
-    job="{{ letsencrypt_command }} renew --agree-tos"
-  tags: ['letsencrypt']
+- name: Make sure certbot systemd override dir exists
+  file: path=/etc/systemd/system/certbot.service.d state=directory
+  tags:
+    - letsencrypt
+    - letsencrypt:configuration
+
+- name: Make sure to restart service on certbot/ssl renewal
+  copy:
+    src=certbot_override.conf
+    dest=/etc/systemd/system/certbot.service.d/certbot.conf
+  notify:
+    - reload systemd configuration
+  tags:
+    - letsencrypt
+    - letsencrypt:configuration
+

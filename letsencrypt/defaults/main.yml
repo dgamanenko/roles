@@ -1,7 +1,7 @@
 ---
 
-letsencrypt_package: "letsencrypt"
-letsencrypt_command: "letsencrypt"
+letsencrypt_package: "certbot"
+letsencrypt_command: "certbot"
 letsencrypt_webroot: "/var/www/letsencrypt"
 letsencrypt_webuser: "www-data"
 letsencrypt_webserver: "nginx"
@@ -12,6 +12,7 @@ letsencrypt_https_redirect: false
 letsencrypt_email: !!null
 letsencrypt_certs: []
 letsencrypt_flags: ""
+letsencrypt_run: true
 
 # This must be a list of hashes, where each hash represents a single certificate
 # letsencrypt_certs:
