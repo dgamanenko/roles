@@ -1,0 +1,21 @@
+[Unit]
+Description=Cert Agent Gunicorn Daemon
+After=network.target
+
+[Service]
+PIDFile=/run/cert_agent/pid
+User={{ app_user }}
+Group={{ app_user }}
+WorkingDirectory={{ django_project_dir }}
+RuntimeDirectory={{ gunicorn_runtime_dir_name }}
+ExecStart={{ venv_dir }}/bin/gunicorn --pid {{ gunicorn_pid }} \
+          --bind {{ gunicorn_bind_ip }}:{{ gunicorn_port }} \
+          -w 3 \
+          cert_agent.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+EnvironmentFile=/home/{{ app_user }}/env
+
+[Install]
+WantedBy=multi-user.target

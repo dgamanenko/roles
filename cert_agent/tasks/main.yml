@@ -1,0 +1,99 @@
+---
+
+- name: Create the app user
+  user: name={{ app_user }} shell=/bin/bash comment="Cert Agent User"
+  tags: ['cert_agent', 'cert_agent:configuration']
+
+- name: Clone app repository
+  become_user: "{{ app_user }}"
+  git: >
+    repo={{git_repo_url}}
+    version={{git_repo_branch}}
+    recursive=yes
+    dest={{git_repo_dir}}
+    force=yes
+    accept_hostkey=True
+  notify:
+    - restart cert_agent
+  tags: ['cert_agent', 'cert_agent:install']
+
+- name: Clear pip build dir
+  become_user: "{{ app_user }}"
+  file: path={{venv_dir}}/build state=absent
+  tags: ['cert_agent', 'cert_agent:requirements']
+
+- name: Create a virtual env and install app requirements
+  become_user: "{{ app_user }}"
+  pip:
+    requirements='requirements.txt'
+    virtualenv={{venv_dir}}
+    chdir={{git_repo_dir}}
+    virtualenv_python=python2.7
+  tags: ['cert_agent', 'cert_agent:requirements']
+
+- name: Set up virtualenv postactivate scripts
+  become_user: "{{ app_user }}"
+  template: src=postactivate dest={{venv_dir}}/bin/postactivate mode=0700 owner={{ app_user }} group={{ app_user }}
+  tags: ['cert_agent', 'cert_agent:virtualenv']
+
+- name: Wire project directory to the virtualenv
+  become_user: "{{ app_user }}"
+  shell: echo "{{git_repo_dir}}" > {{venv_dir}}/.project
+  tags: ['cert_agent', 'cert_agent:virtualenv']
+
+- name: Check Django installation
+  become_user: "{{ app_user }}"
+  django_manage: >
+      command="check"
+      app_path="{{django_project_dir}}"
+      settings="{{django_settings_module}}"
+      pythonpath="{{django_project_dir}}"
+      virtualenv="{{venv_dir}}"
+  environment: '{{django_env_vars}}'
+  tags: ['cert_agent', 'cert_agent:configuration']
+
+# Don't need this for now
+# - name: Run collectstatic
+#   become_user: "{{ app_user }}"
+#   django_manage: >
+#       command=collectstatic
+#       app_path={{django_project_dir}}
+#       settings={{django_settings_module}}
+#       pythonpath={{django_project_dir}}
+#       virtualenv={{venv_dir}}
+#   environment: '{{django_env_vars}}'
+#   tags: ['cert_agent', 'cert_agent:collectstatic']
+
+- name: Run DB migrations
+  become_user: "{{ app_user }}"
+  django_manage: >
+      command=migrate
+      app_path={{django_project_dir}}
+      settings={{django_settings_module}}
+      pythonpath={{django_project_dir}}
+      virtualenv={{venv_dir}}
+  environment: '{{django_env_vars}}'
+  tags: ['cert_agent', 'cert_agent:migrate']
+
+- name: Copy env file
+  template:
+      src=env.j2
+      dest=/home/{{ app_user }}/env
+      owner={{ app_user }}
+      mode=644
+  notify:
+    - restart cert_agent
+  tags: ['cert_agent', 'cert_agent:configuration']
+
+- name: Copy cert_agent systemd service
+  template:
+      src=cert_agent.service
+      dest=/etc/systemd/system/cert_agent.service
+      owner=root
+      mode=644
+  notify:
+    - reload systemd configuration
+    - restart cert_agent
+  tags: ['cert_agent', 'cert_agent:configuration']
+
+

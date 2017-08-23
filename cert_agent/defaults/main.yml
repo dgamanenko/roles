@@ -1,0 +1,32 @@
+app_user: cert_agent
+git_repo_url: https://github.com/appsembler/tahoe_cert_agent.git
+git_repo_branch: master
+git_repo_dir: "/home/{{ app_user }}/tahoe_cert_agent"
+venv_dir_base: "/home/{{ app_user }}/venv"
+venv_dir: "{{venv_dir_base }}/cert_agent"
+django_project_dir: "{{git_repo_dir}}/cert_agent"
+django_media_dir: "{{git_repo_dir}}/media"
+django_static_dir: "{{git_repo_dir}}/staticfiles"
+
+api_secret_key: "changeme"
+django_debug: false
+django_allowed_hosts: "tahoe.appsembler.com,127.0.0.1"
+django_secret_key: "secret"
+django_settings_module: "cert_agent.settings"
+
+gunicorn_runtime_dir_name: cert_agent
+gunicorn_pid: "/run/{{ gunicorn_runtime_dir_name }}/pid"
+gunicorn_bind_ip: "0.0.0.0"
+gunicorn_port: "18000"
+
+ansible_cmd: "cd /edx/app/edx_ansible/edx_ansible/playbooks && ../../venvs/edx_ansible/bin/ansible-playbook -i ../../app_nodes_inventory --tags=letsencrypt:run amc.yml"
+
+django_env_vars: {
+  API_SECRET_KEY: "{{api_secret_key}}",
+  DJANGO_DEBUG: "{{django_debug}}",
+  DJANGO_ALLOWED_HOSTS: "{{django_allowed_hosts}}",
+  DJANGO_SECRET_KEY: "{{ django_secret_key }}",
+  DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}",
+  ANSIBLE_CMD: "{{ ansible_cmd }}"
+}
+
