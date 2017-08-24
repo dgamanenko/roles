@@ -10,7 +10,7 @@ django_static_dir: "{{git_repo_dir}}/staticfiles"
 
 api_secret_key: "changeme"
 django_debug: false
-django_allowed_hosts: "tahoe.appsembler.com,127.0.0.1"
+django_allowed_hosts: "*"
 django_secret_key: "secret"
 django_settings_module: "cert_agent.settings"
 
