@@ -1,0 +1,5 @@
+#!/bin/bash
+# This hook is sourced after this virtualenv is activated.
+{% for k, v in cert_agent_django_env_vars.iteritems() %}
+export {{ k|upper }}="{{ v }}"
+{% endfor %}
