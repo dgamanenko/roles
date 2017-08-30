@@ -13,6 +13,8 @@ gcsfuse_keyfiles: []
 #    group: "my-group"
 #    mode: "0770"
 #    keyfile: "/etc/credentials/service-account-creds.json"
+#    allow_other: false # --> See here: http://manpages.ubuntu.com/manpages/xenial/man8/mount.fuse.8.html
+#    ^ this option only works if the owner is root
 #
 #gcsfuse_keyfiles:
 #  - content: |
