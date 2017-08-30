@@ -103,5 +103,5 @@
       dest=/home/{{ cert_agent_app_user }}/.ssh/id_rsa
       owner={{ cert_agent_app_user }}
       mode=600
-  tags: ['cert_agent', 'cert_agent:configuration', 'deni']
+  tags: ['cert_agent', 'cert_agent:configuration']
 
