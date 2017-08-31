@@ -1,11 +1,7 @@
-{% set domains = [] %}
-{% for item in letsencrypt_certs %}
-{% set domains = domains.extend(item.domains) %}
-{% endfor %}
 server {
     listen 80;
     listen [::]:80;
-    server_name {{ domains | unique | join(' ') }};
+    server_name _;
 
     location '/.well-known/acme-challenge' {
         default_type "text/plain";
