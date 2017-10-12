@@ -11,7 +11,7 @@
 
 - name: Download Snort DAQ
   get_url: >
-    url="{{ snort_base_url }}/{{ snort_daq_archive }}"
+    url="{{ snort_daq_base_url }}/{{ snort_daq_archive }}"
     dest="{{ snort_download_dir }}/{{ snort_daq_archive }}"
     checksum="{{ snort_daq_checksum }}"
   tags: ['snort', 'snort:install']
