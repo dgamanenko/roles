@@ -9,12 +9,12 @@ extensibility, and reusability.
 Clone this repo:
 
     $ cd /path/to/extra/roles
-    $ git clone git@github.com:appsembler/roles.git appsembler_roles
+    $ git clone git@github.com:appsembler/roles.git appsembler-roles
 
 Add it to your `ansible.cfg`:
 
     [defaults]
-    roles_path = /path/to/extra/roles/appsembler_roles
+    roles_path = /path/to/extra/roles/appsembler-roles
 
 
 ## Philosophy
