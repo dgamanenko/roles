@@ -13,10 +13,7 @@ letsencrypt_email: !!null
 letsencrypt_certs: []
 letsencrypt_flags: ""
 letsencrypt_run: true
-
-# needs to be the same name as the variable in the nginx role and defined here as well
-# so that those two roles can be run independently
-nginx_enable_custom_domains: false
+letsencrypt_enable_default_server: false
 
 # This must be a list of hashes, where each hash represents a single certificate
 # letsencrypt_certs:
