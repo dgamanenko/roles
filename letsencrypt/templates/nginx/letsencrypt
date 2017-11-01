@@ -1,6 +1,12 @@
+{%- if letsencrypt_enable_default_server -%}
+  {%- set default_site = "default_server" -%}
+{%- else -%}
+  {%- set default_site = "" -%}
+{%- endif -%}
+
 server {
-    listen 80;
-    listen [::]:80;
+    listen 80 {{ default_site }};
+    listen [::]:80 {{ default_site }};
     server_name _;
 
     location '/.well-known/acme-challenge' {

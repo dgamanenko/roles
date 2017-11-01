@@ -13,6 +13,7 @@ letsencrypt_email: !!null
 letsencrypt_certs: []
 letsencrypt_flags: ""
 letsencrypt_run: true
+letsencrypt_enable_default_server: false
 
 # This must be a list of hashes, where each hash represents a single certificate
 # letsencrypt_certs:
