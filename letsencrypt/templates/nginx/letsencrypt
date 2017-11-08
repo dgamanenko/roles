@@ -1,17 +1,21 @@
+{% if letsencrypt_certs %}
+
 server {
     listen 80;
     listen [::]:80;
-    server_name _;
+    server_name {{ letsencrypt_certs | sum(attribute='domains', start=[]) | join(' ') }};
 
     location '/.well-known/acme-challenge' {
         default_type "text/plain";
         root {{ letsencrypt_webroot }};
     }
 
-{% if letsencrypt_https_redirect %}
-    location / {
-        # Redirect to https
-        return 301 https://$host$request_uri;
-    }
-{% endif %}
+    {% if letsencrypt_https_redirect %}
+        location / {
+            # Redirect to https
+            return 301 https://$host$request_uri;
+        }
+    {% endif %}
 }
+
+{% endif %}
